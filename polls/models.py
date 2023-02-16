@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import datetime
+from django.utils import timezone
 from django.db import models
 
 # Create your models here.
@@ -14,6 +15,16 @@ class Question(models.Model):
 
     def was_published_recently(self):
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+
+
+def create_question(qtext: str, choices: [str]) -> None:
+    q = Question(question_text=qtext, pub_date=timezone.now())
+    q.save()
+    for c in choices:
+        q.choice_set.create(choice_text=c, votes=0)
+    q.save()
+    print(q.choice_set.all())
+    print(q.choice_set.count())
 
 
 class Choice(models.Model):
